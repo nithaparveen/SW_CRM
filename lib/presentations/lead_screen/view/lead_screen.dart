@@ -8,6 +8,7 @@ import 'package:sw_crm/core/constants/colors.dart';
 import 'package:sw_crm/presentations/lead_screen/controller/lead_controller.dart';
 import '../../../app_config/app_config.dart';
 import '../../../core/constants/textstyles.dart';
+import '../../lead_detail_screen/view/lead_detail_screen.dart';
 import '../../login_screen/view/login_screen.dart';
 
 class LeadScreen extends StatefulWidget {
@@ -25,7 +26,8 @@ class _LeadScreenState extends State<LeadScreen> {
   }
 
   Future<void> fetchData() async {
-    await Provider.of<LeadController>(context, listen: false).fetchData(context);
+    await Provider.of<LeadController>(context, listen: false)
+        .fetchData(context);
   }
 
   @override
@@ -43,7 +45,8 @@ class _LeadScreenState extends State<LeadScreen> {
             const SizedBox(width: 18),
             Text(
               "Leads",
-              style: GLTextStyles.robotoStyle(size: 20, weight: FontWeight.w500),
+              style:
+                  GLTextStyles.robotoStyle(size: 20, weight: FontWeight.w500),
             ),
           ],
         ),
@@ -53,7 +56,10 @@ class _LeadScreenState extends State<LeadScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout_outlined,size: 20,),
+            icon: const Icon(
+              Icons.logout_outlined,
+              size: 20,
+            ),
             onPressed: () => logoutConfirmation(),
           ),
         ],
@@ -70,11 +76,10 @@ class _LeadScreenState extends State<LeadScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-
-            if (controller.leadsModel.data == null || controller.leadsModel.data!.isEmpty) {
+            if (controller.leadsModel.data == null ||
+                controller.leadsModel.data!.isEmpty) {
               return const Center(child: Text("No data available"));
             }
-
             return CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
@@ -86,7 +91,9 @@ class _LeadScreenState extends State<LeadScreen> {
                     var lead = controller.leadsModel.data![index];
                     return InkWell(
                       splashColor: Colors.transparent,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LeadDetailScreen(leadId: controller.leadsModel.data?[index].id,),));
+                      },
                       child: Card(
                         surfaceTintColor: ColorTheme.white,
                         color: ColorTheme.white,
@@ -122,11 +129,11 @@ class _LeadScreenState extends State<LeadScreen> {
                               ),
                               const SizedBox(height: 10),
                               Container(
-                                margin: const EdgeInsets.only(top: 5),
+                                margin: const EdgeInsets.only(top: 2),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.yellow[100],
+                                  color: Colors.green[100],
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Text(
@@ -169,13 +176,13 @@ class _LeadScreenState extends State<LeadScreen> {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false);
+        (route) => false);
   }
 
   void logoutConfirmation() {
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent dismissal by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Logout'),
@@ -183,13 +190,13 @@ class _LeadScreenState extends State<LeadScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
                 await logout(context);
               },
               child: const Text('Confirm'),
