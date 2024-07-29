@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sw_crm/presentations/lead_screen/controller/lead_controller.dart';
 import 'package:sw_crm/presentations/login_screen/controller/login_controller.dart';
+import 'package:sw_crm/presentations/lead_screen/view/lead_screen.dart';
 import 'package:sw_crm/presentations/login_screen/view/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sw_crm/app_config/app_config.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool loggedIn = prefs.getBool(AppConfig.loggedIn) ?? false;
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => LoginController()),
-  ], child: const MyApp()));
+    ChangeNotifierProvider(create: (context) => LeadController()),
+  ], child: MyApp(isLoggedIn: loggedIn)));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: isLoggedIn ? const LeadScreen() : const LoginScreen(),
     );
   }
 }

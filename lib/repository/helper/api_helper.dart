@@ -30,7 +30,7 @@ class ApiHelper {
     }
   }
 
-  static getData({
+  static Future<dynamic> getData({
     required String endPoint,
     Map<String, String>? header,
   }) async {
@@ -43,13 +43,39 @@ class ApiHelper {
       log("response -> ${response.body.toString()}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        log("$decodedData");
+        log("Decoded data: $decodedData");
         return decodedData;
       } else {
+        log("API call failed with status code: ${response.statusCode}");
+        return null;
+      }
+    } catch (e, stackTrace) {
+      log("Error in ApiHelper.getData: $e\nStackTrace: $stackTrace");
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>> getDataWOStatus({
+    required String endPoint,
+    Map<String, String>? header,
+  }) async {
+    log("ApiHelper -> getDataWOStatus");
+    final url = Uri.parse(AppConfig.baseurl + endPoint);
+    log("url -> $url");
+    try {
+      var response = await http.get(url, headers: header);
+      log("Response body: ${response.body}"); // Log the raw JSON response
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        log("Decoded data: $decodedData"); // Log the decoded JSON data
+        return {"status": true, "data": decodedData};
+      } else {
         log("Else Condition >> Api failed");
+        return {"status": false, "data": null};
       }
     } catch (e) {
       log("$e");
+      return {"status": false, "data": null};
     }
   }
 

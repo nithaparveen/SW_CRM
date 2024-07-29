@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sw_crm/presentations/login_screen/controller/login_controller.dart';
-import 'package:sw_crm/presentations/verify_otp_screen/view/verify_otp_screen.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/textstyles.dart';
 
