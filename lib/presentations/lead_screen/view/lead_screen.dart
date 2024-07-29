@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get_time_ago/get_time_ago.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sw_crm/core/constants/colors.dart';
 import 'package:sw_crm/presentations/lead_screen/controller/lead_controller.dart';
+import '../../../app_config/app_config.dart';
 import '../../../core/constants/textstyles.dart';
+import '../../login_screen/view/login_screen.dart';
 
 class LeadScreen extends StatefulWidget {
   const LeadScreen({super.key});
@@ -46,6 +51,12 @@ class _LeadScreenState extends State<LeadScreen> {
         forceMaterialTransparency: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout_outlined,size: 20,),
+            onPressed: () => logoutConfirmation(),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -148,5 +159,44 @@ class _LeadScreenState extends State<LeadScreen> {
     } catch (e) {
       return 'Invalid date format';
     }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    log("Logout");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.remove(AppConfig.token);
+    sharedPreferences.setBool(AppConfig.loggedIn, false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (route) => false);
+  }
+
+  void logoutConfirmation() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissal by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the dialog
+                await logout(context);
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
