@@ -12,15 +12,15 @@ class AppUtils {
   static Future<String?> getToken() async {
     log("AppUtils -> getToken()");
     final sharedPreferences = await SharedPreferences.getInstance();
-    if (sharedPreferences.get(AppConfig.token) != null) {
-      final access =
-          jsonDecode(sharedPreferences.get(AppConfig.token) as String);
-      log("Token -> $access");
-      return access;
+    final token = sharedPreferences.getString(AppConfig.token);
+    if (token != null) {
+      log("Token -> $token");
+      return token;
     } else {
       return null;
     }
   }
+
 
   static oneTimeSnackBar(
     String? message, {

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get_time_ago/get_time_ago.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/textstyles.dart';
 import '../controller/lead_detail_controller.dart';
@@ -49,11 +51,13 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
         onRefresh: () => fetchData(),
         child: Consumer<LeadDetailController>(
           builder: (context, controller, _) {
-            String formatDate(DateTime? dateTime) {
+
+            String formatTime(DateTime? dateTime) {
               if (dateTime == null) return 'Invalid date';
               try {
                 return GetTimeAgo.parse(dateTime);
               } catch (e) {
+                print("Error formatting date: $e");
                 return 'Invalid date format';
               }
             }
@@ -70,8 +74,8 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        buildLeadInfoCard(controller, formatDate),
-                        // buildDetailSection(controller),
+                        buildLeadInfoCard(controller, formatTime),
+                        buildDetailSection(controller),
                       ],
                     ),
                   );
@@ -97,19 +101,19 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${controller.leadDetailModel.data?.name}",
+                    controller.leadDetailModel.data?.name ?? "",
                     style: GLTextStyles.robotoStyle(
                         size: 18, weight: FontWeight.w500),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "${controller.leadDetailModel.data?.email}",
+                    controller.leadDetailModel.data?.email ?? "",
                     style: GLTextStyles.robotoStyle(
                         size: 15, weight: FontWeight.w400),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "${controller.leadDetailModel.data?.phoneNumber}",
+                    controller.leadDetailModel.data?.phoneNumber ?? "",
                     style: GLTextStyles.robotoStyle(
                         size: 15, weight: FontWeight.w400),
                   ),
@@ -120,7 +124,7 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
               margin: const EdgeInsets.only(top: 2),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange[100],
+                color: Colors.teal[50],
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Text(
@@ -134,4 +138,127 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
       ),
     );
   }
+
+  Widget buildDetailSection(LeadDetailController controller) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+            details.length,
+            (index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(details[index],
+                          style: GLTextStyles.cabinStyle(size: 18)),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 3,
+                      child: Wrap(
+                        children: [
+                          Text(
+                            ": ${getDetailValue(controller, index)}",
+                            style: GLTextStyles.cabinStyle(
+                                size: 18, weight: FontWeight.w500),
+                            overflow: TextOverflow.fade,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  String? getDetailValue(LeadDetailController controller, int index) {
+    switch (details[index]) {
+      case "Name":
+        return controller.leadDetailModel.data?.name ?? "";
+      case "Email":
+        return controller.leadDetailModel.data?.email ?? "";
+      case "Phone Number":
+        return controller.leadDetailModel.data?.phoneNumber ?? "";
+      case "Location":
+        return controller.leadDetailModel.data?.location ?? "";
+      case "Message":
+        return controller.leadDetailModel.data?.message ?? "";
+      case "Lead type":
+        return controller.leadDetailModel.data?.leadType ?? "";
+      case "Utm source":
+        return controller.leadDetailModel.data?.utmSource ?? "";
+      case "Utm medium":
+        return controller.leadDetailModel.data?.utmMedium ?? "";
+      case "Utm campaign":
+        return controller.leadDetailModel.data?.utmCampaign ?? "";
+      case "gclid":
+        return controller.leadDetailModel.data?.gclid ?? "";
+      case "Source url":
+        return controller.leadDetailModel.data?.sourceUrl ?? "";
+      case "ip address":
+        return controller.leadDetailModel.data?.ipAddress ?? "";
+      case "User agent":
+        return controller.leadDetailModel.data?.userAgent ?? "";
+      case "Referrer link":
+        return controller.leadDetailModel.data?.referrerLink ?? "";
+      case "Remarks":
+        return controller.leadDetailModel.data?.remarks ?? "";
+      case "Status":
+        return controller.leadDetailModel.data?.status ?? "";
+      case "Created at":
+        return formatDate(
+            DateTime.parse("${controller.leadDetailModel.data?.createdAt}"));
+      case "Updated at":
+        return formatDate(
+            DateTime.parse("${controller.leadDetailModel.data?.updatedAt}"));
+      default:
+        return "";
+    }
+  }
+
+  String formatDate(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'Invalid date';
+    }
+    try {
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (e) {
+      log("Error formatting date: $e");
+      return 'Invalid date format';
+    }
+  }
 }
+
+const List<String> details = [
+  "Name",
+  "Email",
+  "Phone Number",
+  "Location",
+  "Message",
+  "Lead type",
+  "Utm source",
+  "Utm medium",
+  "Utm campaign",
+  "gclid",
+  "Source url",
+  "ip address",
+  "User agent",
+  "Referrer link",
+  "Remarks",
+  "Status",
+  "Created at",
+  "Updated at"
+];

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get_time_ago/get_time_ago.dart';
 import 'package:provider/provider.dart';
@@ -92,7 +91,13 @@ class _LeadScreenState extends State<LeadScreen> {
                     return InkWell(
                       splashColor: Colors.transparent,
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => LeadDetailScreen(leadId: controller.leadsModel.data?[index].id,),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LeadDetailScreen(
+                                leadId: controller.leadsModel.data?[index].id,
+                              ),
+                            ));
                       },
                       child: Card(
                         surfaceTintColor: ColorTheme.white,
@@ -133,7 +138,7 @@ class _LeadScreenState extends State<LeadScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.green[100],
+                                  color: Colors.teal[50],
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Text(
