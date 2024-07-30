@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/textstyles.dart';
+import '../../lead_screen/view/lead_screen.dart';
 import '../controller/bottom_navigation_controller.dart';
-import 'lead_chart_screen.dart';
+import '../../lead_stats_screen/view/lead_stats_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -30,7 +31,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           return IndexedStack(
             index: provider.selectedIndex,
             children: const [
-              // DashboardScreen(),
+              LeadScreen(),
               LeadChart(),
               LeadChart(),
             ],
@@ -54,7 +55,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         color: ColorTheme.blue, size: 10),
                     unselectedLabelStyle:
                         GLTextStyles.cabinStyle(color: Colors.grey, size: 10),
-                    backgroundColor: Colors.blue[50],
+                    backgroundColor: Colors.teal[50],
                     currentIndex: controller.selectedIndex,
                     onTap: (index) {
                       setState(() {

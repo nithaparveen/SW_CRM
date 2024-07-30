@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sw_crm/presentations/lead_screen/view/lead_screen.dart';
+import 'package:sw_crm/presentations/bottom_navigation_screen/view/bottom_navigation_screen.dart';
 import '../../../app_config/app_config.dart';
 import '../../../core/utils/app_utils.dart';
 import '../../../repository/api/login_screen/service/login_service.dart';
@@ -21,7 +21,7 @@ class LoginController extends ChangeNotifier {
       await storeUserToken(response["data"]["token"]);
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const LeadScreen()),
+          MaterialPageRoute(builder: (context) => const BottomNavBar()),
           (route) => false);
     } else {
       log("Login failed, response: $response");

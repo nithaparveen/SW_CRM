@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sw_crm/presentations/bottom_navigation_screen/controller/bottom_navigation_controller.dart';
+import 'package:sw_crm/presentations/bottom_navigation_screen/view/bottom_navigation_screen.dart';
 import 'package:sw_crm/presentations/lead_detail_screen/controller/lead_detail_controller.dart';
 import 'package:sw_crm/presentations/lead_screen/controller/lead_controller.dart';
 import 'package:sw_crm/presentations/login_screen/controller/login_controller.dart';
@@ -15,6 +17,7 @@ void main() async {
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => LoginController()),
+    ChangeNotifierProvider(create: (context) => BottomNavigationController()),
     ChangeNotifierProvider(create: (context) => LeadController()),
     ChangeNotifierProvider(create: (context) => LeadDetailController()),
   ], child: MyApp(isLoggedIn: loggedIn)));
@@ -28,7 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? const LeadScreen() : const LoginScreen(),
+      home: isLoggedIn ? const BottomNavBar() : const LoginScreen(),
     );
   }
 }
