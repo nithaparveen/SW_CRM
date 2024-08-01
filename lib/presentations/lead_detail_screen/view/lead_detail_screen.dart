@@ -100,18 +100,21 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (controller.leadDetailModel.data?.name != null)
                   Text(
                     controller.leadDetailModel.data?.name ?? "",
                     style: GLTextStyles.robotoStyle(
                         size: 18, weight: FontWeight.w500),
                   ),
                   const SizedBox(height: 4),
+                  if (controller.leadDetailModel.data?.email != null)
                   Text(
                     controller.leadDetailModel.data?.email ?? "",
                     style: GLTextStyles.robotoStyle(
                         size: 15, weight: FontWeight.w400),
                   ),
                   const SizedBox(height: 4),
+                  if (controller.leadDetailModel.data?.phoneNumber != null)
                   Text(
                     controller.leadDetailModel.data?.phoneNumber ?? "",
                     style: GLTextStyles.robotoStyle(
@@ -149,7 +152,9 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
             details.length,
-            (index) {
+                (index) {
+              final value = getDetailValue(controller, index);
+              if (value == null || value.isEmpty) return Container();
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Row(
@@ -225,7 +230,7 @@ class LeadDetailScreenState extends State<LeadDetailScreen> {
         return formatDate(
             DateTime.parse("${controller.leadDetailModel.data?.updatedAt}"));
       default:
-        return "";
+        return null;
     }
   }
 

@@ -16,4 +16,18 @@ class LeadService {
       return null;
     }
   }
+  static Future<dynamic> fetchLeads({required int page}) async {
+    log("LeadService -> fetchLeads()");
+    try {
+      var nextPage = "http://be.mandgholidays.com/api/app/lead/list?page=$page";
+      var decodedData = await ApiHelper.getDataWObaseUrl(
+        endPoint: nextPage,
+        header: ApiHelper.getApiHeader(access: await AppUtils.getToken()),
+      );
+      return decodedData;
+    } catch (e) {
+      log("$e");
+      throw Exception('Failed to fetch leads');
+    }
+  }
 }

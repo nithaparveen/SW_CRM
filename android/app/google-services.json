@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "673340385479",
+    "project_id": "mandg-crm",
+    "storage_bucket": "mandg-crm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673340385479:android:7588804dce4e9b2bcbb6e2",
+        "android_client_info": {
+          "package_name": "com.sw_crm.sw_crm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAn7vKm8TGO6MOJkcjkwnBhuU9WjfzfAo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

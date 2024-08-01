@@ -18,15 +18,44 @@ class LeadScreen extends StatefulWidget {
 }
 
 class _LeadScreenState extends State<LeadScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+
   @override
   void initState() {
     super.initState();
     fetchData();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.extentAfter < 500) {
+      fetchMoreData();
+    }
+  }
+
+  void fetchMoreData() async {
+    if (!_isLoadingMore) {
+      setState(() {
+        _isLoadingMore = true;
+      });
+      await Provider.of<LeadController>(context, listen: false)
+          .loadMoreData(context);
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
   }
 
   Future<void> fetchData() async {
     await Provider.of<LeadController>(context, listen: false)
         .fetchData(context);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +94,7 @@ class _LeadScreenState extends State<LeadScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await fetchData();
+          await  Provider.of<LeadController>(context,listen: false).fetchData(context);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -80,81 +109,95 @@ class _LeadScreenState extends State<LeadScreen> {
               return const Center(child: Text("No data available"));
             }
             return CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 SliverToBoxAdapter(
                   child: SizedBox(height: size.width * .02),
                 ),
-                SliverList.separated(
-                  itemCount: controller.leadsModel.data!.length,
-                  itemBuilder: (context, index) {
-                    var lead = controller.leadsModel.data![index];
-                    return InkWell(
-                      splashColor: Colors.transparent,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LeadDetailScreen(
-                                leadId: controller.leadsModel.data?[index].id,
-                              ),
-                            ));
-                      },
-                      child: Card(
-                        surfaceTintColor: ColorTheme.white,
-                        color: ColorTheme.white,
-                        elevation: 2,
-                        margin: const EdgeInsets.all(6),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
+                Consumer<LeadController>(
+                  builder: (context,controller,_) {
+                    return controller.isLoading
+                        ? const SliverToBoxAdapter(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                        : SliverList.separated(
+                      itemCount: controller.leadsModel.data!.length,
+                      itemBuilder: (context, index) {
+                        var lead = controller.leadsModel.data![index];
+                        return InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LeadDetailScreen(
+                                    leadId: controller.leadsModel.data?[index].id,
+                                  ),
+                                ));
+                          },
+                          child: Card(
+                            surfaceTintColor: ColorTheme.white,
+                            color: ColorTheme.white,
+                            elevation: 2,
+                            margin: const EdgeInsets.all(6),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    lead.name ?? "No Name",
-                                    style: GLTextStyles.openSans(
-                                        size: 16, weight: FontWeight.w700),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        lead.name ?? "No Name",
+                                        style: GLTextStyles.openSans(
+                                            size: 16, weight: FontWeight.w700),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        lead.email ?? "",
+                                        style: GLTextStyles.openSans(
+                                            size: 15, weight: FontWeight.w500),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        lead.phoneNumber ?? "",
+                                        style: GLTextStyles.openSans(
+                                            size: 15, weight: FontWeight.w500),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    lead.email ?? "",
-                                    style: GLTextStyles.openSans(
-                                        size: 15, weight: FontWeight.w500),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    lead.phoneNumber ?? "",
-                                    style: GLTextStyles.openSans(
-                                        size: 15, weight: FontWeight.w500),
+                                  const SizedBox(height: 10),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.teal[50],
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Text(
+                                      formatDate(lead.createdAt),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 10),
-                              Container(
-                                margin: const EdgeInsets.only(top: 2),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.teal[50],
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Text(
-                                  formatDate(lead.createdAt),
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: size.width * .02,
                       ),
                     );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: size.width * .02,
-                  ),
+                  }
                 )
               ],
             );

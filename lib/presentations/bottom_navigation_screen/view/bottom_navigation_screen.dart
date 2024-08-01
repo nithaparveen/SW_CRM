@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/textstyles.dart';
 import '../../lead_screen/view/lead_screen.dart';
+import '../../lead_stats_screen/view/lead_chart_screen.dart';
 import '../controller/bottom_navigation_controller.dart';
 import '../../lead_stats_screen/view/lead_stats_screen.dart';
 
@@ -32,8 +33,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             index: provider.selectedIndex,
             children: const [
               LeadScreen(),
-              LeadChart(),
-              LeadChart(),
+              LeadChartScreen(),
+              LeadChartScreen(),
             ],
           );
         },
